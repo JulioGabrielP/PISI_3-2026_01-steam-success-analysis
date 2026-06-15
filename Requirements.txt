@@ -1,0 +1,34 @@
+# ─────────────────────────────────────────────
+# PISI 3 – Steam Success Analysis
+# Requirements (Python 3.10+)
+# ─────────────────────────────────────────────
+
+# Data manipulation & I/O
+numpy
+pandas
+pyarrow          # leitura de arquivos .parquet / .feather
+
+# Visualização
+matplotlib
+plotly
+
+# Machine Learning (scikit-learn)
+scikit-learn
+
+# Balanceamento de classes
+imbalanced-learn  # imblearn: SMOTE, RandomOverSampler
+
+# Processamento de texto
+nltk
+
+# Explainability / interpretabilidade
+shap
+
+# Persistência de modelos
+joblib
+
+# Estatística
+scipy
+
+# Download de datasets do Google Drive
+gdown
