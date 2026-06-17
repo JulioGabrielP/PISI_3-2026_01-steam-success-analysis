@@ -1,214 +1,361 @@
 # Playscope Dashboard 🎮
 
-Plataforma analítica interativa do mercado Steam, desenvolvida como parte de um projeto acadêmico de Ciência de Dados. Construída com **Dash + Plotly + Pandas**, permite explorar livremente um dataset de ~50 mil jogos da Steam por meio de filtros dinâmicos, visualizações interativas e análises de machine learning.
+Dashboard interativo desenvolvido para o projeto acadêmico **Steam Success Analysis**, da disciplina de Projeto Interdisciplinar para Sistemas de Informação III.
 
----
+A aplicação organiza e apresenta as etapas da pesquisa realizada sobre jogos da Steam, reunindo análise exploratória, clusterização, discussão dos limites da previsão comercial e classificação textual de reviews.
 
-## Visão Geral
-
-O dashboard funciona como um mini Business Intelligence do mercado de jogos digitais. Em vez de apresentar análises estáticas, ele oferece uma ferramenta onde o usuário faz suas próprias perguntas sobre os dados e obtém respostas visuais em tempo real — todos os gráficos respondem simultaneamente aos filtros da barra lateral.
-
-O projeto é baseado em um dataset público da Steam disponível no Kaggle e integra as etapas de análise exploratória, clusterização com KMeans e interpretabilidade via SHAP desenvolvidas no trabalho acadêmico original.
+O dashboard foi construído com **Dash**, **Plotly**, **Pandas** e **Scikit-learn**.
 
 ---
 
 ## Páginas
 
-| Página | O que explora |
-|--------|---------------|
-| 📊 **Visão Geral** | KPIs do mercado, distribuição de preços, ratings, faturamento por gênero, scatter de reviews e heatmap de correlação de Spearman |
-| 🎮 **Engajamento** | Horas jogadas vs. faturamento estimado, engajamento por gênero, preço vs. horas, comparativo Steam Deck, lançamentos por ano |
-| 🔬 **Clusterização** | Visualização PCA 2D dos 4 clusters KMeans, radar chart comparativo, perfis, taxa de sucesso e tags por cluster |
-| 💰 **Mercado & Preços** | Preço vs. volume de reviews, faturamento por faixa de preço, desconto vs. revenue, distribuição de descontos, top 20 jogos |
-| 🧠 **Interpretabilidade** | Importância SHAP das features, comparação dos modelos supervisionados, SHAP summary plot, dependence plots e matriz de confusão |
+| Página                       | Conteúdo                                                   |
+| ---------------------------- | ---------------------------------------------------------- |
+| **Percurso da Pesquisa**     | Apresentação das etapas, perguntas e decisões do projeto   |
+| **Análise Exploratória**     | Visualizações interativas dos dados estruturados dos jogos |
+| **Perfis de Jogos**          | Resultados da clusterização com K-Means                    |
+| **Limites da Previsão**      | Revisão metodológica do experimento de previsão comercial  |
+| **Classificação de Reviews** | Resultados da classificação textual de avaliações da Steam |
+
+Os filtros laterais são utilizados nas páginas baseadas nos dados estruturados. As páginas **Limites da Previsão** e **Classificação de Reviews** apresentam resultados e discussões próprias, sem utilizar esses filtros.
+
+Os detalhes metodológicos e os resultados completos estão disponíveis no artigo acadêmico do projeto.
 
 ---
 
-## Filtros Globais
+## Estrutura da aplicação
 
-A barra lateral controla todos os gráficos ao mesmo tempo:
-
-- **Gênero / Tag** — filtra por categoria do jogo
-- **Faixa de preço** — slider de $0 a $250
-- **Avaliação mínima** — positive ratio mínimo
-- **Ano de lançamento** — range de 2003 a 2024
-- **Clusters** — seleciona quais dos 4 grupos exibir
-- **Steam Deck** — compatível / incompatível / todos
-- **Sucesso Comercial** — top 20% de faturamento / restante / todos
-
----
-
-## Estrutura do Projeto
-
-```
-playscope_dashboard/
-├── dashboard.py                   ← ponto de entrada
-├── generate_demo_data.py          ← processa os dados e gera os parquets
-├── requirements.txt
-├── data/
-│   ├── steam_dashboard.parquet    ← dataset principal (~50k jogos)
-│   ├── cluster_profile.parquet    ← perfil médio dos 4 clusters
-│   ├── shap_importance.parquet    ← importância SHAP das features
-│   └── model_results.parquet      ← comparação dos modelos
+```text
+Dashboard_PISI/
 ├── assets/
-│   └── style.css                  ← tema dark Steam
-├── layouts/                       ← estrutura de cada página (sem lógica)
-│   ├── sidebar.py
-│   ├── overview.py
-│   ├── engagement.py
-│   ├── clusters.py
-│   ├── pricing.py
-│   └── shap_page.py
-├── callbacks/                     ← lógica interativa de todos os gráficos
-│   ├── theme.py
-│   ├── overview_cb.py
-│   ├── engagement_cb.py
-│   ├── cluster_cb.py
-│   ├── pricing_cb.py
-│   ├── shap_cb.py
-│   └── reset_cb.py
-└── utils/
-    └── data_loader.py             ← carregamento com cache (lru_cache)
+│   └── arquivos de estilo
+├── callbacks/
+│   └── lógica das visualizações interativas
+├── layouts/
+│   └── estrutura das páginas
+├── utils/
+│   └── carregamento e filtragem dos dados
+├── dashboard.py
+├── generate_demo_data.py
+├── requirements.txt
+└── README.md
 ```
 
----
+Na primeira configuração, também serão utilizadas estas pastas locais:
 
-## Como Rodar
-
-### Pré-requisitos
-
-- Python **3.10** ou superior
-- pip atualizado
-- Dataset do Kaggle: [Game Recommendations on Steam](https://www.kaggle.com/datasets/antonkozyriev/game-recommendations-on-steam)
-
----
-
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/IgordevBR/Dashboard_PISI.git
-cd Dashboard_PISI
+```text
+Dashboard_PISI/
+├── archive/    # arquivos originais baixados do Kaggle
+└── data/       # arquivos processados gerados pelo script
 ```
 
+Essas pastas não são fornecidas integralmente pelo GitHub por causa do tamanho dos dados.
+
 ---
 
-### 2. Crie e ative um ambiente virtual
+# Como executar pela primeira vez
 
-**Windows:**
+## Pré-requisitos
+
+Antes de começar, tenha instalado:
+
+* Git;
+* Python 3.10 ou superior;
+* pip.
+
+Python 3.10 ou 3.11 é recomendado para maior compatibilidade com as versões registradas no projeto.
+
+---
+
+## 1. Clone o repositório
+
 ```bash
+git clone https://github.com/JulioGabrielP/PISI_3-2026_01-steam-success-analysis.git
+```
+
+Entre na pasta da aplicação:
+
+```bash
+cd PISI_3-2026_01-steam-success-analysis/dashboard/Dashboard_PISI
+```
+
+Todos os próximos comandos devem ser executados dentro dessa pasta.
+
+---
+
+## 2. Crie um ambiente virtual
+
+### Windows — PowerShell
+
+```powershell
 python -m venv venv
-venv\Scripts\activate
+.\venv\Scripts\Activate.ps1
 ```
 
-**macOS / Linux:**
-```bash
+Caso o PowerShell bloqueie a ativação, execute:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\venv\Scripts\Activate.ps1
+```
+
+### Windows — Prompt de Comando
+
+```cmd
 python -m venv venv
+venv\Scripts\activate.bat
+```
+
+### Linux ou macOS
+
+```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ---
 
-### 3. Instale as dependências
+## 3. Instale as dependências
+
+Com o ambiente virtual ativado, execute:
 
 ```bash
-pip install -r requirements.txt
-```
-
-Dependências utilizadas:
-
-```
-dash==2.17.1
-dash-bootstrap-components==1.6.0
-plotly==5.22.0
-pandas==2.2.2
-numpy==1.26.4
-pyarrow==16.0.0
-scikit-learn==1.5.0
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 ---
 
-### 4. Baixe e configure o dataset
+## 4. Baixe o dataset
 
-O dataset não está incluído neste repositório devido ao tamanho dos arquivos. Você precisa baixá-lo manualmente no Kaggle pelo link indicado nos pré-requisitos.
+O projeto utiliza o dataset público:
 
-Após baixar e extrair o `.zip`, você terá uma pasta chamada `archive` com os seguintes arquivos:
+[Game Recommendations on Steam — Kaggle](https://www.kaggle.com/datasets/antonkozyriev/game-recommendations-on-steam)
 
+Faça o download do dataset e extraia o arquivo compactado.
+
+Para preparar o dashboard, são necessários estes três arquivos:
+
+```text
+games.csv
+games_metadata.json
+recommendations.csv
 ```
-archive/
-├── games.csv
-├── games_metadata.json
-├── recommendations.csv
-└── users.csv
+
+O arquivo `users.csv`, caso esteja presente no download, não é utilizado pelo script atual do dashboard.
+
+---
+
+## 5. Crie a pasta `archive`
+
+Dentro de `dashboard/Dashboard_PISI`, crie uma pasta chamada:
+
+```text
+archive
 ```
 
-Mova essa pasta `archive` para dentro de `playscope_dashboard`, ficando assim:
+Coloque dentro dela os três arquivos extraídos do Kaggle.
 
-```
-playscope_dashboard/
+A estrutura deverá ficar exatamente assim:
+
+```text
+Dashboard_PISI/
 ├── archive/
 │   ├── games.csv
 │   ├── games_metadata.json
-│   ├── recommendations.csv
-│   └── users.csv
+│   └── recommendations.csv
+├── assets/
+├── callbacks/
+├── layouts/
+├── utils/
 ├── dashboard.py
 ├── generate_demo_data.py
-└── ...
+├── requirements.txt
+└── README.md
 ```
+
+É importante manter os nomes originais dos arquivos.
 
 ---
 
-### 5. Processe os dados
+## 6. Processe os dados
 
-Execute o script de pré-processamento. Ele lê os arquivos da pasta `archive`, aplica a engenharia de features, roda o KMeans K=4 e o PCA, e gera os parquets otimizados na pasta `data/`.
+Execute:
 
 ```bash
 python generate_demo_data.py
 ```
 
-> ⚠️ **Atenção:** o arquivo `recommendations.csv` tem cerca de 12 milhões de linhas. O processamento pode levar entre 2 e 5 minutos dependendo da sua máquina. Isso só precisa ser feito uma vez.
+O script realiza a preparação necessária para o dashboard, incluindo:
 
-Ao terminar, você verá:
+* leitura dos jogos;
+* associação das tags;
+* cálculo da média de horas jogadas;
+* criação das variáveis utilizadas nas visualizações;
+* clusterização com K-Means;
+* projeção bidimensional com PCA;
+* geração dos arquivos Parquet.
 
-```
-============================================================
-  ✓ Processamento concluído!
-  Execute agora: python dashboard.py
-  Acesse em:     http://127.0.0.1:8050
-============================================================
-```
+O arquivo `recommendations.csv` é grande. Por isso, essa etapa pode levar vários minutos e consumir uma quantidade considerável de memória.
+
+Ela precisa ser executada apenas na primeira configuração ou quando os dados precisarem ser gerados novamente.
 
 ---
 
-### 6. Inicie o dashboard
+## 7. Verifique os arquivos gerados
+
+Após o processamento, deverá existir uma pasta `data` com estes arquivos:
+
+```text
+Dashboard_PISI/
+└── data/
+    ├── steam_dashboard.parquet
+    ├── cluster_profile.parquet
+    ├── shap_importance.parquet
+    └── model_results.parquet
+```
+
+O dashboard depende desses arquivos para carregar seus dados.
+
+Não execute `dashboard.py` antes de concluir essa etapa.
+
+---
+
+## 8. Inicie o dashboard
+
+Execute:
 
 ```bash
 python dashboard.py
 ```
 
-Abra o navegador e acesse:
+Quando o servidor iniciar, abra no navegador:
 
-```
+```text
 http://127.0.0.1:8050
+```
+
+Para encerrar a aplicação, pressione:
+
+```text
+Ctrl + C
+```
+
+---
+
+# Execuções posteriores
+
+Depois que a pasta `data` já tiver sido gerada, não será necessário processar novamente o dataset.
+
+Nas próximas execuções, entre na pasta do dashboard, ative o ambiente virtual e execute:
+
+### Windows — PowerShell
+
+```powershell
+cd PISI_3-2026_01-steam-success-analysis\dashboard\Dashboard_PISI
+.\venv\Scripts\Activate.ps1
+python dashboard.py
+```
+
+### Linux ou macOS
+
+```bash
+cd PISI_3-2026_01-steam-success-analysis/dashboard/Dashboard_PISI
+source venv/bin/activate
+python dashboard.py
+```
+
+---
+
+## Problemas comuns
+
+### O dashboard informa que um arquivo Parquet não foi encontrado
+
+Confirme se você executou:
+
+```bash
+python generate_demo_data.py
+```
+
+Depois, verifique se os quatro arquivos foram criados dentro de `data/`.
+
+---
+
+### O script informa que `games.csv` não foi encontrado
+
+Confirme se a estrutura está assim:
+
+```text
+Dashboard_PISI/archive/games.csv
+```
+
+O mesmo vale para:
+
+```text
+Dashboard_PISI/archive/games_metadata.json
+Dashboard_PISI/archive/recommendations.csv
+```
+
+---
+
+### Uma biblioteca não foi encontrada
+
+Ative novamente o ambiente virtual e reinstale as dependências:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+---
+
+### O comando `python` não foi reconhecido
+
+No Windows, tente usar:
+
+```powershell
+py dashboard.py
+```
+
+Para processar os dados:
+
+```powershell
+py generate_demo_data.py
+```
+
+No Linux ou macOS, tente:
+
+```bash
+python3 dashboard.py
 ```
 
 ---
 
 ## Tecnologias
 
-- [Dash](https://dash.plotly.com/) — framework de aplicações analíticas em Python
-- [Plotly](https://plotly.com/python/) — visualizações interativas
-- [Pandas](https://pandas.pydata.org/) — manipulação e análise de dados
-- [Scikit-learn](https://scikit-learn.org/) — KMeans e PCA
-- [PyArrow](https://arrow.apache.org/docs/python/) — formato Parquet para alta performance
+* Python
+* Dash
+* Dash Bootstrap Components
+* Plotly
+* Pandas
+* NumPy
+* Scikit-learn
+* PyArrow
+
+As versões utilizadas estão registradas no arquivo `requirements.txt`.
 
 ---
 
 ## Dataset
 
-**Game Recommendations on Steam** — disponível publicamente no Kaggle.
+**Game Recommendations on Steam**
+Autor: Anton Kozyriev
+Plataforma: Kaggle
 
-> Kozyriev, Anton. *Game Recommendations on Steam*. Kaggle, 2023.
-> https://www.kaggle.com/datasets/antonkozyriev/game-recommendations-on-steam
+Os arquivos originais não são armazenados no repositório devido ao seu tamanho. Cada usuário que configurar o projeto pela primeira vez deverá baixar o dataset e executar o script de processamento.
 
-O dataset não está incluído neste repositório devido às limitações de tamanho de arquivo do GitHub. Siga as instruções da seção **Como Rodar** para obtê-lo e configurá-lo localmente.
+---
+
+## Contexto acadêmico
+
+O Playscope faz parte do projeto **Steam Success Analysis**, desenvolvido pelo Grupo 6 para a disciplina de Projeto Interdisciplinar para Sistemas de Informação III, no curso de Sistemas de Informação da Universidade Federal Rural de Pernambuco — UFRPE, durante o período 2026.1.
