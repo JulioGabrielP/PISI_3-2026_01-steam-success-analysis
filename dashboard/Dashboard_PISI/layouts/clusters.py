@@ -5,8 +5,28 @@ def create_clusters_layout():
     return html.Div([
         html.Div(
             '🔬  KMeans K=4 — Clusters identificados com base em engajamento, aprovação, faturamento e desconto.',
-            className='page-subtitle'
+            className='page-subtitle',
         ),
+
+        # Card explicativo do método KMeans
+        html.Div(className='card', style={'marginBottom': '16px'}, children=[
+            html.Div('📖  Como o KMeans foi aplicado', className='card-title'),
+            html.P(
+                'O algoritmo K-Means foi aplicado sobre quatro variáveis: média de horas jogadas, '
+                'taxa de aprovação, faturamento estimado (proxy) e desconto. As variáveis de horas '
+                'e faturamento receberam transformação logarítmica para reduzir assimetria, e todos '
+                'os atributos foram padronizados antes da clusterização. O número de clusters foi '
+                'definido como K=4 com base no método do cotovelo e no coeficiente de silhueta '
+                '(score = 0,3226), indicando separação moderada entre os perfis. A projeção 2D via '
+                'PCA preservou aproximadamente 59,7% da variância dos dados.',
+                style={
+                    'color': 'var(--text-muted)',
+                    'fontSize': '12px',
+                    'lineHeight': '1.6',
+                    'margin': 0,
+                },
+            ),
+        ]),
 
         # Row 1: PCA scatter (big) + Cluster size donut
         html.Div(className='chart-grid-21', children=[
