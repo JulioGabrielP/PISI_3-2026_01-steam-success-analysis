@@ -21,7 +21,7 @@ def register_callbacks(app):
             )
 
         try:
-            model = joblib.load(os.path.join(DATA_DIR, 'logistic_model.pkl'))
+            model = joblib.load(os.path.join(DATA_DIR, 'modelo_classificacao_reviews.pkl'))
             vectorizer = joblib.load(os.path.join(DATA_DIR, 'tfidf_vectorizer.pkl'))
         except FileNotFoundError:
             return html.Div(
